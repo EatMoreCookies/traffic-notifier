@@ -1,9 +1,12 @@
 from pydantic import BaseModel
 import json
+import datetime
+from datetime import datetime
 
 class Properties(BaseModel):
     injuries: int
     route_name: str
+    last_updated: datetime
 
 class Geometry(BaseModel):
     srid: int
@@ -33,11 +36,12 @@ class FeatureCollection:
                     properties=Properties(
                         injuries=f['properties']['injuries'],
                         route_name=f['properties']['routeName'],
+                        last_updated=datetime.strptime(f['properties']['lastUpdated'], '%Y-%m-%dT%H:%M:%S.%fZ')
                     )
                 )
             )        
             except:
-                print("Failed to parse {}".format(f))
+                print("Failed to parse a feature{}".format(f))
             
             
             
