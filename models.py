@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-import json
 import datetime
 from datetime import datetime
 
@@ -7,11 +6,11 @@ class Properties(BaseModel):
     injuries: int
     route_name: str
     last_updated: datetime
+    traveler_information_message: str
 
 class Geometry(BaseModel):
     srid: int
     type: str
-    #coordinates: [[]]
 
 class Feature(BaseModel):
     type: str
@@ -31,12 +30,12 @@ class FeatureCollection:
                     geometry=Geometry(
                         srid=f['geometry']['srid'],
                         type=f['geometry']['type'],
-                        #coordinates=[],
                     ),
                     properties=Properties(
                         injuries=f['properties']['injuries'],
                         route_name=f['properties']['routeName'],
-                        last_updated=datetime.strptime(f['properties']['lastUpdated'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                        last_updated=datetime.strptime(f['properties']['lastUpdated'], '%Y-%m-%dT%H:%M:%S.%fZ'),
+                        traveler_information_message=f['properties']['travelerInformationMessage']
                     )
                 )
             )        
