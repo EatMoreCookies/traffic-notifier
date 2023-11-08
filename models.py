@@ -42,8 +42,3 @@ class FeatureCollection:
             )        
             except:
                 print("Failed to parse a feature{}".format(f))
-            
-            
-            
-
-        

@@ -3,6 +3,7 @@ from models import FeatureCollection
 import sys
 import os
 import argparse
+from twilio_client import TwilioClient
 
 api_key: str = os.environ['CO_DOT_TRAFFIC_API_KEY']
 
@@ -18,6 +19,7 @@ if response.status_code != 200:
 parser = argparse.ArgumentParser('Fetches incident data from CO\'s DOT and notifies the owner of the process.')
 parser.add_argument('-i', '--injuries', help='Will return and notify any injuries', action='store_true', dest='injuries')
 parser.add_argument('-tapi', '--test_api', help='Will fetch from DOT API and print results (kinda ugly)', action='store_true', dest='test_api')
+parser.add_argument('phone_number', metavar='P', type=str, nargs='+', help='Phone number to send notification to')
 
 args = parser.parse_args()
 
@@ -28,9 +30,17 @@ if args.test_api == True:
 featureCollection = FeatureCollection() 
 featureCollection.parse_from_json(incident_json)
 
+notification_message: str = ""
+
+twilio_client: TwilioClient = TwilioClient()
+
 if args.injuries == True:
     print('Getting Injuries...')
 
     for f in featureCollection.features:
-            if (f.properties.injuries > 0):
-                print("{} injuries found on route {}. Last updated on {}".format(f.properties.injuries, f.properties.route_name, f.properties.last_updated))
+        notification_message += "{} injuries found on route {}. Last updated on {}\n".format(f.properties.injuries, f.properties.route_name, f.properties.last_updated)
+
+
+if notification_message != "":
+    print("Sending message to {}".format(args.phone_number))
+    twilio_client.send_message(args.phone_number, notification_message)
