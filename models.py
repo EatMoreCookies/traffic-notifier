@@ -1,6 +1,13 @@
 from pydantic import BaseModel
 import datetime
 from datetime import datetime
+from enum import Enum
+
+class IncidentType(Enum):
+    INJURIES = 0
+    TRAVELER_INFO = 1,
+    TEST_API = 2,
+    CRASHES = 3
 
 class Properties(BaseModel):
     injuries: int
